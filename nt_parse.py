@@ -1,3 +1,5 @@
+#Press ctrl/enter to run
+
 def nt_parse(_, text, __, key_word):
     with open("Bible/" + text + ".txt") as book:
         total_word_count = 0
@@ -29,5 +31,6 @@ def nt_parse(_, text, __, key_word):
         print("\nChapter where \"{}\" occurs most frequently: ".format
              (key_word), max_chp)
 
-nt_parse(print("Which book would you like to parse?"), input(),
-         print("What word would you like to find?"), input())
+# nt_parse(print("Which book would you like to parse?"), input(),
+#          print("What word would you like to find?"), input())
+nt_parse()
