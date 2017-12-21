@@ -5,7 +5,7 @@ def nt_parse():
     print("What word would you like to find?")
     key_word = input()
 
-    with open("Bible/" + text + ".txt") as book:
+    with open("New Testament/" + text + ".txt") as book:
         total_word_count = 0
         chp_count = 0
         max_chp = 0
