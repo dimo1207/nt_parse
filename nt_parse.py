@@ -11,7 +11,7 @@ def nt_parse():
     
     print("Which book would you like to parse?")
     text = input()
-    if text[0].islower():
+    if not text.istitle():
         text = text.title()
     print("What word would you like to find?")
     key_word = input()
