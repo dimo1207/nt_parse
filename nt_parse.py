@@ -1,7 +1,17 @@
 def nt_parse():
-
+    """This code iterates through New Testament text to find 
+    user-entered word, submitted on the command line.
+    
+    This version only finds the number of user-words per
+    chapter, sites the chapter where the word occurs most 
+    frequently, and calculates the total occurence of this 
+    word in the book as a whole.
+    """
+    
     print("Which book would you like to parse?")
     text = input()
+    if text[0].islower():
+        text = text.title()
     print("What word would you like to find?")
     key_word = input()
 
@@ -35,4 +45,5 @@ def nt_parse():
         print("\nChapter where \"{}\" occurs most frequently: ".format
              (key_word), max_chp)
 
-nt_parse()
+if __name__ == "__main__":
+    nt_parse()
