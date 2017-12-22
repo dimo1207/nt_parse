@@ -4,7 +4,7 @@ def nt_parse():
     
     This version only finds the number of user-words per
     chapter, sites the chapter where the word occurs most 
-    frequently, and calculates the total occurence of this 
+    frequently, and calculates the total occurrence of this 
     word in the book as a whole.
     """
     
@@ -26,7 +26,7 @@ def nt_parse():
             if key_word in chapter:
                 word_count += chapter.count(key_word)
             words_in_chapter.append(word_count)
-            print("Occurence of \"{}\" in Chapter {}: ".format
+            print("Occurrence of \"{}\" in Chapter {}: ".format
             (key_word, chp_count), word_count)
             total_word_count += word_count
             most_freq = max(words_in_chapter)
