@@ -1,4 +1,5 @@
 def nt_parse():
+    
     """This code iterates through New Testament text to find 
     user-entered word, submitted on the command line.
     
