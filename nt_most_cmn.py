@@ -10,43 +10,26 @@ print("Which book would you like to parse?")
 def nt_most_cmn(inpuT):
     with open("New Testament/" + str(inpuT) + ".txt") as book:
         chapters = [chp.split() for chp in book]
-        count = []
-        words = []
-        chapter_list = []
-        chapter_count = 0
-        chapter_tups = []
 
-        for chapter in chapters:
-            chapter_count += 1
-            chapter_list.append(chapter_count)
-            count.append([chapter.count(word) for word in chapter])
-            words.append([word for word in chapter])
+    count, words, chapter_list, chapter_tups = [], [], [], []
+    chapter_count = 0
 
-        # for ls in words:
-        #     for word in ls:
-        #     # if word.startswith("("):
-        #     #     word = word[1:]
-        #         elif word.endswith("\""):
-        #             word.strip("\"")
-        #         elif word.endswith("?"):
-        #             word.strip("?")
-        #         elif word.endswith(")"):
-        #             word.strip(")")
-        #         elif word.endswith("!"):
-        #             word.strip("!")
-        #         elif word.endswith(","):
-        #             word.strip(",")
-        #         elif word.endswith("."):
-        #             word.strip(".")
+    for chapter in chapters:
+        chapter_count += 1
+        chapter_list.append(chapter_count)
+        # List comprehension strips words of punctuation/case and nests them in "words" list, organized by chapter:
+        words.append([word.strip("();:\"\'?!,.").lower() for word in chapter])
+    for chapter in words:
+        # Creates a list of nested lists containing word lengths; corresponds to nested "words" lists:
+        count.append([chapter.count(word) for word in chapter])
 
-        for i in range(len(chapter_list)):
-            chapter_tups.append(sorted({(count, word) for count, word in zip(count[i], words[i])}, reverse=True))
-            
-        print(chapter_tups[0])
-        # print((chapter_tups[0]))
-        # for i in range(len(chapter_tups)):
-        #     print([item[i] for item in chapter_tups])
-        
+    for i in range(len(chapter_list)):
+        chapter_tups.append(sorted({(count, word) for count, word in zip(count[i], words[i])}, reverse=True))
+
+
+    for i in range(len(chapter_tups)):    #  Prints out 20 most common words for all chapters in book.
+        print("The 20 most common words in Chapter {} are:\n".format(i + 1))
+        print(chapter_tups[i][:21], "\n\n")
 
 
 if __name__ == "__main__":
