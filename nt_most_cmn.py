@@ -28,14 +28,12 @@ def nt_most_cmn(text):
             # Set comprehension producing (int, str) tuples from count/words lists:
             {(count, word) for count, word in zip(count[i], words[i])}, 
             reverse=True)) # Sorts the final list of sets in descending order by count.
+            
+    return chapter_tups
 
-    # Test:
-    # for i in range(len(chapter_tups)):
-    #     for l in range(len(chapter_tups[i])):
-    #         print(chapter_tups[i][l][1])
     # chapter_tups can be indexed three times: the first index indicates chapter,
-    # the second indicates most common words tups (sorted by highest count first), and
-    # the last is indexed as 0 or 1, returing the count or the word (respectively).
+    # the second indicates "most common words" tuples (sorted by highest count first), and
+    # the last is indexed as 0 or 1, returning the count or the word (respectively).
 
 
 if __name__ == "__main__":
