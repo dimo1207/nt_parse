@@ -39,6 +39,5 @@ def nt_most_cmn(text):
 
 
 if __name__ == "__main__":
-    print("Which book would you like to parse?")
-    text = input()
+    text = input("Which book would you like to parse?\n")
     nt_most_cmn(text)
