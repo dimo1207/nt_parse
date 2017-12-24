@@ -2,24 +2,22 @@ from nt_most_cmn import nt_most_cmn
 
 chapter_tups = nt_most_cmn("John")
 
+def munge():
+    # Mask of unwanted words:
+    unwanted = ['is', 'to', 'of', 'and', 'in', 'with', 'are', 'this',
+                'the', 'a', 'an', 'he', 'her', 'him', 'she', 'they', 'them', 'you',
+                'we', 'i', 'have', 'his', 'who', 'were', 'whose', 'when', 'was',
+                'said', 'from', 'whom', 'but', 'what', 'that', 'it', 'then', 'which',
+                'where', 'here']
 
-final_range = 0
-pronouns = ['he', 'her', 'him', 'she', 'they', 'them', 'you']
-articles = ['the', 'a', 'an']
-for i in range(len(chapter_tups)):
-    for l in range(len(chapter_tups[i])):  # - final_range):
-        if chapter_tups[i][l][1] in articles:
-            final_range += 1
-        if chapter_tups[i][l][1] in pronouns:
-            final_range += 1
-print(final_range)
+    for l in range(len(chapter_tups[0])):
+        while chapter_tups[0][l][1] in unwanted:
+            del chapter_tups[0][l]
+            chapter_tups[0].append("for deletion")
+        while chapter_tups[0][l][0] == 1:
+            del chapter_tups[0][l]
+            chapter_tups[0].append("for deletion")
 
-print(len(chapter_tups[0]))
-
-for i in range(len(chapter_tups)):
-    for l in range(len(chapter_tups[i]) - final_range):
-        if chapter_tups[i][l][1] in articles:
-            del chapter_tups[i][l]
-        if chapter_tups[i][l][1] in pronouns:
-            del chapter_tups[i][l]
-print(len(chapter_tups[0]))
+    del_idx = chapter_tups[0].index("for deletion")
+    return (chapter_tups[0][:del_idx])
+munge()
