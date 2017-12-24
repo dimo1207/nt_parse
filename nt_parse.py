@@ -1,4 +1,4 @@
-def nt_parse():
+def nt_parse(text, key_word):
     
     """This code iterates through New Testament text to find 
     user-entered word, submitted on the command line.
@@ -8,13 +8,6 @@ def nt_parse():
     frequently, and calculates the total occurrence of this 
     word in the book as a whole.
     """
-    
-    print("Which book would you like to parse?")
-    text = input()
-    if not text.istitle():
-        text = text.title()
-    print("What word would you like to find?")
-    key_word = input()
 
     with open("New Testament/" + text + ".txt") as book:
         total_word_count = 0
@@ -48,4 +41,8 @@ def nt_parse():
 
 
 if __name__ == "__main__":
-    nt_parse()
+    text = input("Which book would you like to parse?\n")
+    if not text.istitle():
+        text = text.title()
+    key_word = input("What word would you like to find?\n")
+    nt_parse(text, key_word)
