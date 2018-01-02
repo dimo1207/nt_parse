@@ -1,6 +1,8 @@
 import re
+import pickle
+nt_dict = pickle.load(open("nt_dict", "rb"))
 
-def nt_phrase_parse(text, phrase):
+def nt_phrase_parse(phrase):
     full = ""
     phrase = phrase.lower()
     with open("New Testament/" + text + ".txt", 'r') as book:
@@ -19,8 +21,5 @@ def nt_phrase_parse(text, phrase):
 
 
 if __name__ == "__main__":
-    text = input("Which book would you like to parse?\n")
-    if not text.istitle():
-        text = text.title()
     phrase = input("What phrase are you looking for?\n")
-    nt_phrase_parse(text, phrase)
+    nt_phrase_parse(phrase)
