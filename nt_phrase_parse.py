@@ -10,5 +10,5 @@ def nt_phrase_parse(phrase):
 
 
 if __name__ == "__main__":
-    phrase = input("What phrase are you looking for?\n")
+    phrase = input("What word or phrase are you looking for?\n")
     nt_phrase_parse(phrase)
