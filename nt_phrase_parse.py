@@ -1,6 +1,4 @@
 import re
-import pickle
-nt_dict = pickle.load(open("nt_dict", "rb"))
 
 def nt_phrase_parse(phrase):
     full = ""
