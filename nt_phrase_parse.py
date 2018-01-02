@@ -1,21 +1,12 @@
-import re
+import pickle
+nt_dict = pickle.load(open("nt_dict", "rb"))
+
 
 def nt_phrase_parse(phrase):
-    full = ""
-    phrase = phrase.lower()
-    with open("New Testament/" + text + ".txt", 'r') as book:
-        for chapter in book:
-            full += chapter.lower()
-
-    for x in re.finditer(phrase, full):
-        print("Phrase found:", x.start(), x.end())
-        print(full[x.start()-50:x.start()+50])
-
-
-
-
-
-
+    for key in nt_dict.keys():
+        for i in nt_dict[key]:
+            if phrase in nt_dict[key][i]:
+                print(key, i)
 
 
 if __name__ == "__main__":
