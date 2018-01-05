@@ -1,10 +1,19 @@
+"""This module imports the chapter_tups function
+from nt_most_cmn, and requires a parameter
+specifying the desired text. The function defines
+a mask of unwanted words, and then by indexing
+leaves these words out of the final return value.
+It also collects a list of hapaxes -- words
+occuring only once in the text."""
+
 from nt_most_cmn import nt_most_cmn
 
-chapter_tups = nt_most_cmn("Revelation")
 
 def munge():
+    """This is the sole function of the module."""
+    chapter_tups = nt_most_cmn()
     hapaxes = []
-    x = -1  # Chapter index
+    idx = -1  # Chapter index
     # Mask of unwanted words:
     unwanted = ['is', 'to', 'of', 'and', 'in', 'with', 'are', 'this',
                 'the', 'a', 'an', 'he', 'her', 'him', 'she', 'they', 'them', 'you',
@@ -13,17 +22,18 @@ def munge():
                 'where', 'here', 'me', 'those', 'by', 'even', 'so', 'about', 'though',
                 'as', 'also']
 
-    for l in range(len(chapter_tups[x])):
-        while chapter_tups[x][l][1] in unwanted:
-            del chapter_tups[x][l]
-            chapter_tups[x].append("for deletion")
-        while chapter_tups[x][l][0] == 1:
-            hapaxes.append(chapter_tups[x][l])
-            del chapter_tups[x][l]
-            chapter_tups[x].append("for deletion")
+    for i in range(len(chapter_tups[idx])):
+        while chapter_tups[idx][i][1] in unwanted:
+            del chapter_tups[idx][i]
+            chapter_tups[idx].append("for deletion")
+        while chapter_tups[idx][i][0] == 1:
+            hapaxes.append(chapter_tups[idx][i])
+            del chapter_tups[idx][i]
+            chapter_tups[idx].append("for deletion")
 
-    del_idx = chapter_tups[x].index("for deletion")
-    print(chapter_tups[x][:del_idx])
+    del_idx = chapter_tups[idx].index("for deletion")
+    print(chapter_tups[idx][:del_idx])
     # print(hapaxes)
+
 
 munge()
