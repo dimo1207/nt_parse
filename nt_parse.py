@@ -8,12 +8,10 @@ word in the book as a whole."""
 
 def nt_parse():
     """This is the sole function of the module."""
-    print("Which book would you like to parse?")
-    text = input()
+    text = input("Which book would you like to parse?\n")
     if text[0].islower():
         text = text.title()
-    print("What word would you like to find?")
-    key_word = input()
+    key_word = input("What word would you like to find?\n")
 
     with open("New Testament/" + text + ".txt") as book:
         total_word_count = 0
