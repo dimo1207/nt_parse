@@ -4,10 +4,12 @@ is the frequency of the word, followed by the word itself.
 Only words occurring X or more times are printed."""
 
 
-def nt_most_cmn(text):
-    if not text.istitle():
-        text = text.title()
-    with open("New Testament/" + text + ".txt") as book:
+def nt_most_cmn():
+    """This is the sole function of this module."""
+    txt = input("Which book would you like to parse?\n")
+    if not txt.istitle():
+        txt = txt.title()
+    with open("New Testament/" + txt + ".txt") as book:
         chapters = [chp.split() for chp in book]
 
     count, words, chapter_list, chapter_tups = [], [], [], []
@@ -16,19 +18,21 @@ def nt_most_cmn(text):
     for chapter in chapters:
         chapter_count += 1
         chapter_list.append(chapter_count)
-        # List comprehension strips words of punctuation/case and nests them in "words" list, organized by chapter:
+        # List comprehension strips words of punctuation/case
+        # and nests them in "words" list, organized by chapter:
         words.append([word.strip("();:\"\'?!,.").lower() for word in chapter])
 
     for chapter in words:
-        # Creates a list of nested lists containing word lengths; corresponds to nested "words" lists:
+        # Creates a list of nested lists containing word lengths;
+        # corresponds to nested "words" lists:
         count.append([chapter.count(word) for word in chapter])
 
     for i in range(len(chapter_list)):
         chapter_tups.append(sorted(
             # Set comprehension producing (int, str) tuples from count/words lists:
-            {(count, word) for count, word in zip(count[i], words[i])}, 
-            reverse=True)) # Sorts the final list of sets in descending order by count.
-            
+            {(count, word) for count, word in zip(count[i], words[i])},
+            reverse=True))  # Sorts the final list of sets in descending order by count.
+
     return chapter_tups
 
     # chapter_tups can be indexed three times: the first index indicates chapter,
@@ -37,5 +41,4 @@ def nt_most_cmn(text):
 
 
 if __name__ == "__main__":
-    text = input("Which book would you like to parse?\n")
-    nt_most_cmn(text)
+    nt_most_cmn()
