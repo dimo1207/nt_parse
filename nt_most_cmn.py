@@ -6,10 +6,10 @@ Only words occurring X or more times are printed."""
 
 def nt_most_cmn():
     """This is the sole function of this module."""
-    txt = input("Which book would you like to parse?\n")
-    if not txt.istitle():
-        txt = txt.title()
-    with open("New Testament/" + txt + ".txt") as book:
+    text = input("Which book would you like to parse?\n")
+    if not text.istitle():
+        text = text.title()
+    with open("New Testament/" + text + ".txt") as book:
         chapters = [chp.split() for chp in book]
 
     count, words, chapter_list, chapter_tups = [], [], [], []
