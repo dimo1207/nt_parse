@@ -27,20 +27,20 @@ def munge():
                 'as', 'also']
     numbers = [str(x) for x in range(75)]
 
-    for i in range(len(chapter_tups[idx])):
+    for i, _ in enumerate(chapter_tups[idx]):
         while chapter_tups[idx][i][1] in unwanted or chapter_tups[idx][i][1] in numbers:
             del chapter_tups[idx][i]
             chapter_tups[idx].append("for deletion")
         while chapter_tups[idx][i][0] == 1:
-            hapaxes.append(chapter_tups[idx][i])
+            hapaxes.append(chapter_tups[idx][i][1])
             del chapter_tups[idx][i]
             chapter_tups[idx].append("for deletion")
 
     del_idx = chapter_tups[idx].index("for deletion")
     del chapter_tups[idx][del_idx:]
 
-    for i in range(len(hapaxes)):
-        while hapaxes[i][1] in unwanted or hapaxes[i][1] in numbers:
+    for i, _ in enumerate(hapaxes):
+        while hapaxes[i] in unwanted or hapaxes[i] in numbers:
             del hapaxes[i]
             hapaxes.append("for deletion")
 
@@ -53,9 +53,7 @@ def munge():
     haps = input(
         "\nWould you also like to return a list of words occurring only once? (Y or N):\n")
     if haps == "Y" or haps == 'y':
-        print("\nWords that occur only once:\n")
-        clear_read = [tup[1] for tup in hapaxes]
-        print(clear_read[::-1])
+        print("\nWords that occur only once:\n", hapaxes[::-1])
 
 
 if __name__ == "__main__":
