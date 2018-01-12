@@ -2,29 +2,28 @@
 found in the user-entered book. The first value in the tuple
 is the frequency of the word, followed by the word itself.
 Only words occurring X or more times are printed."""
-
+import pickle
 
 def most_common(text):
     """This is the sole function of this module."""
-    with open("New Testament/" + text + ".txt") as book:
-        chapters = [chp.split() for chp in book]
-
+    nt_dict = pickle.load(open("nt_dict", "rb"))
     count, words, chapter_list, chapter_tups = [], [], [], []
     chapter_count = 0
 
-    for chapter in chapters:
+    for chapter in nt_dict[text]:
         chapter_count += 1
         chapter_list.append(chapter_count)
         # List comprehension strips words of punctuation/case
         # and nests them in "words" list, organized by chapter:
-        words.append([word.strip("();:\"\'?!,.-").lower() for word in chapter])
+        words.append([word.strip("();:\"\'?!,.-").lower()
+                      for word in nt_dict[text][chapter].split()])
 
     for chapter in words:
         # Creates a list of nested lists containing word lengths;
         # corresponds to nested "words" lists:
         count.append([chapter.count(word) for word in chapter])
 
-    for i in range(len(chapter_list)):
+    for i, _ in enumerate(chapter_list):
         chapter_tups.append(sorted(
             # Set comprehension producing (int, str) tuples from count/words lists:
             {(count, word) for count, word in zip(count[i], words[i])},
