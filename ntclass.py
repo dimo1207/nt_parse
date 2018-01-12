@@ -27,9 +27,11 @@ class NewTestamentParse(object):
         if self.key_word == "Default":
             # creates a list of word lengths from phrase:
             length_of_words = [(len(word)) for word in phrase.split()]
-            idx = length_of_words.index(max(length_of_words))  # indexes the longest word
+            # indexes the longest word:
+            idx = length_of_words.index(max(length_of_words))
+            # sets key_word to the longest word in phrase:
             self.key_word = phrase.split()[idx] if len(phrase.split()) > 1 else phrase
-            # ternary operator ; covers single word entries when key_word is not specified
+            # ternary operator covers single word entries when key_word is not specified
 
 
     def full_parse(self):
