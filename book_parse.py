@@ -8,17 +8,11 @@ import pickle
 
 def book_parse():
     """This is the sole function of the module."""
-    print("Which book would you like to parse?")
-    text = input()
-    if text[0].islower():
-        text = text.title()
-    print("What word would you like to find?")
-    key_word = input()
+    text = input("Which book would you like to parse?\n").title()
+    key_word = input("What word would you like to find?\n")
     nt_dict = pickle.load(open("nt_dict", "rb"))
 
-    total_word_count = 0
-    chp_count = 0
-    max_chp = 0
+    total_word_count, chp_count, max_chp = 0, 0, 0
     words_in_chapter = []
     for chapter in nt_dict[text]:
         chp_count += 1
@@ -41,9 +35,9 @@ def book_parse():
         elif cnt == max(words_in_chapter):
             max_chp = (words_in_chapter.index(cnt) + 1)
     print("\nTotal times that the word \"{}\" occurs in {}: "
-            .format(key_word, text), total_word_count)
+          .format(key_word, text), total_word_count)
     print("\nChapter where \"{}\" occurs most frequently: ".format
-            (key_word), max_chp)
+          (key_word), max_chp)
 
 if __name__ == "__main__":
     book_parse()
