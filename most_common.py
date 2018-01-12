@@ -37,7 +37,4 @@ def most_common(text):
 
 
 if __name__ == "__main__":
-    text = input("Which book would you like to parse?\n")
-    if not text.istitle():
-        text = text.title()
-    most_common(text)
+    most_common(input("Which book would you like to parse?\n").title())
