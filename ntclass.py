@@ -16,7 +16,7 @@ class NewTestamentParse(object):
     most_common()
     """
 
-    def __init__(self, 
+    def __init__(self,
                  text,
                  phrase,
                  key_word="Default"):
@@ -24,9 +24,11 @@ class NewTestamentParse(object):
         self.phrase = phrase
         self.key_word = key_word
         if self.key_word == "Default":
-            length_of_words = [(len(word)) for word in phrase.split()] # creates a list of word lengths from phrase
+            # length_of_words creates a list of word lengths from phrase:
+            length_of_words = [(len(word)) for word in phrase.split()]
             idx = length_of_words.index(max(length_of_words))  # indexes longest word
-            self.key_word = phrase.split()[idx] if len(phrase.split()) > 1 else phrase  # ternary operator ; covers single word entries
+            self.key_word = phrase.split()[idx] if len(phrase.split()) > 1 else phrase
+            # ternary operator ; covers single word entries
 
 
     def full_parse(self):
@@ -49,42 +51,42 @@ class NewTestamentParse(object):
 
 
     def book_parse(self):
-            """This method iterates through New Testament text to find
-            user-entered word, submitted on the command line.
-            This version only finds the number of user-words per
-            chapter, sites the chapter where the word occurs most
-            frequently, and calculates the total occurence of this
-            word in the book as a whole."""
+        """This method iterates through New Testament text to find
+        user-entered word, submitted on the command line.
+        This version only finds the number of user-words per
+        chapter, sites the chapter where the word occurs most
+        frequently, and calculates the total occurence of this
+        word in the book as a whole."""
 
-            with open("New Testament/" + self.text + ".txt") as book:
-                total_word_count = 0
-                chp_count = 0
-                max_chp = 0
-                words_in_chapter = []
-                for chapter in book:
-                    chp_count += 1
-                    word_count = 0
-                    if self.key_word in chapter:
-                        word_count += chapter.count(self.key_word)
-                    words_in_chapter.append(word_count)
-                    print("Occurence of \"{}\" in Chapter {}: ".format
-                        (self.key_word, chp_count), word_count)
-                    total_word_count += word_count
-                    most_freq = max(words_in_chapter)
-                for cnt in words_in_chapter:
-                    if total_word_count == 0:
-                        max_chp = "n/a"
-                    elif words_in_chapter.count(most_freq) > 1:
-                        max_chp = []
-                        for i, word in enumerate(words_in_chapter):
-                            if word == most_freq:
-                                max_chp.append(i + 1)
-                    elif cnt == max(words_in_chapter):
-                        max_chp = (words_in_chapter.index(cnt) + 1)
-                print("\nTotal times that the word \"{}\" occurs in {}: "
-                    .format(self.key_word, self.text), total_word_count,
-                    "\nChapter where \"{}\" occurs most frequently: ".format
-                    (self.key_word), max_chp)
+        with open("New Testament/" + self.text + ".txt") as book:
+            total_word_count = 0
+            chp_count = 0
+            max_chp = 0
+            words_in_chapter = []
+            for chapter in book:
+                chp_count += 1
+                word_count = 0
+                if self.key_word in chapter:
+                    word_count += chapter.count(self.key_word)
+                words_in_chapter.append(word_count)
+                print("Occurence of \"{}\" in Chapter {}: ".format
+                      (self.key_word, chp_count), word_count)
+                total_word_count += word_count
+                most_freq = max(words_in_chapter)
+            for cnt in words_in_chapter:
+                if total_word_count == 0:
+                    max_chp = "n/a"
+                elif words_in_chapter.count(most_freq) > 1:
+                    max_chp = []
+                    for i, word in enumerate(words_in_chapter):
+                        if word == most_freq:
+                            max_chp.append(i + 1)
+                elif cnt == max(words_in_chapter):
+                    max_chp = (words_in_chapter.index(cnt) + 1)
+            print("\nTotal times that the word \"{}\" occurs in {}: "
+                  .format(self.key_word, self.text), total_word_count,
+                  "\nChapter where \"{}\" occurs most frequently: ".format
+                  (self.key_word), max_chp)
 
 
     def most_common(self):
@@ -114,7 +116,7 @@ class NewTestamentParse(object):
             # corresponds to nested "words" lists:
             count.append([chapter.count(word) for word in chapter])
 
-        for i in range(len(chapter_list)):
+        for i, _ in enumerate(chapter_list):
             chapter_tups.append(sorted(
                 # Set comprehension producing (int, str) tuples from count/words lists:
                 {(count, word) for count, word in zip(count[i], words[i])},
@@ -129,20 +131,20 @@ class NewTestamentParse(object):
                     'as', 'also']
         numbers = [str(x) for x in range(75)]
 
-        for i in range(len(chapter_tups[idx])):
+        for i, _ in enumerate(chapter_tups[idx]):
             while chapter_tups[idx][i][1] in unwanted or chapter_tups[idx][i][1] in numbers:
                 del chapter_tups[idx][i]
                 chapter_tups[idx].append("for deletion")
             while chapter_tups[idx][i][0] == 1:
-                hapaxes.append(chapter_tups[idx][i])
+                hapaxes.append(chapter_tups[idx][i][1])
                 del chapter_tups[idx][i]
                 chapter_tups[idx].append("for deletion")
 
         del_idx = chapter_tups[idx].index("for deletion")
         del chapter_tups[idx][del_idx:]
 
-        for i in range(len(hapaxes)):
-            while hapaxes[i][1] in unwanted or hapaxes[i][1] in numbers:
+        for i, _ in enumerate(hapaxes):
+            while hapaxes[i] in unwanted or hapaxes[i] in numbers:
                 del hapaxes[i]
                 hapaxes.append("for deletion")
 
@@ -150,11 +152,9 @@ class NewTestamentParse(object):
         del hapaxes[del_hap:]
 
         print("\nMost commonly occurring words in the book of {}, Chapter {}:\n\n"
-            .format(self.text, idx), chapter_tups[idx])
+              .format(self.text, idx), chapter_tups[idx])
 
         haps = input(
             "\nWould you also like to return a list of words occurring only once? (Y or N):\n")
         if haps == "Y" or haps == 'y':
-            print("\nWords that occur only once:\n")
-            clear_read = [tup[1] for tup in hapaxes]
-            print(clear_read[::-1])
+            print("\nWords that occur only once:\n", hapaxes[::-1])
