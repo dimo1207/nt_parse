@@ -5,16 +5,23 @@ a mask of unwanted words, and then by indexing
 leaves these words out of the final return value.
 It also collects a list of hapaxes -- words
 occuring only once in the text."""
-
+import sys
+sys.tracebacklimit = None
+import pickle
 from most_common import *
 
 
 def munge():
     """This is the sole function of the module."""
+    nt_dict = pickle.load(open("nt_dict", "rb"))
     text = input("Which book would you like to parse?\n")
     if not text.istitle():
         text = text.title()
     idx = int(input("What chapter are you interested in?\n"))  # Chapter index
+    if idx > len(nt_dict[text]):
+        raise IndexError(
+            "{} only has {} chapters. Please enter a number between {} and {}.".format(
+                text, len(nt_dict[text]), 1, len(nt_dict[text])))
 
     chapter_tups = most_common(text)
     hapaxes = []
@@ -49,7 +56,7 @@ def munge():
 
     print("\nMost commonly occurring words in the book of {}, Chapter {}:\n\n"
             .format(text, idx), chapter_tups[idx])
-    
+
     haps = input(
         "\nWould you also like to return a list of words occurring only once? (Y or N):\n")
     if haps == "Y" or haps == 'y':
