@@ -21,11 +21,11 @@ class NewTestamentParse(object):
                  text,
                  phrase,
                  key_word="Default"):
-        self.text = text
+        self.text = text.title()
         self.phrase = phrase
         self.key_word = key_word
         if self.key_word == "Default":
-            # length_of_words creates a list of word lengths from phrase:
+            # creates a list of word lengths from phrase:
             length_of_words = [(len(word)) for word in phrase.split()]
             idx = length_of_words.index(max(length_of_words))  # indexes the longest word
             self.key_word = phrase.split()[idx] if len(phrase.split()) > 1 else phrase
@@ -53,15 +53,15 @@ class NewTestamentParse(object):
 
     def book_parse(self):
         """This method iterates through New Testament text to find
-        user-entered word, submitted on the command line.
-        This version only finds the number of user-words per
+        user-entered key_word (if the key_word parameter is unspecified,
+        the instance constructor (__init__) sets the longest word
+        submitted in the phrase parameter equal to the "key_word" variable).
+        This version finds the number of user-words per
         chapter, sites the chapter where the word occurs most
         frequently, and calculates the total occurence of this
         word in the book as a whole."""
         nt_dict = pickle.load(open("nt_dict", "rb"))
-        total_word_count = 0
-        chp_count = 0
-        max_chp = 0
+        total_word_count, chp_count, max_chp = 0, 0, 0
         words_in_chapter = []
 
         for chapter in nt_dict[self.text]:
@@ -95,15 +95,16 @@ class NewTestamentParse(object):
         """This method prints out tuples of the most common words
         found in the user-entered book. The first value in the tuple
         is the frequency of the word, followed by the word itself.
-        Only words occurring X or more times are printed. Words occurring
-        only once are added to hapaxes list."""
+        Words occurring only once are added to hapaxes list, accessed
+        via a prompt once the program runs."""
         nt_dict = pickle.load(open("nt_dict", "rb"))
-        # Chapter index:
-        idx = int(input("What chapter are you interested in?\n"))
-        if idx > len(nt_dict[self.text]):
+        # Chapter index (-1 to adjust for indexing rules):
+        idx = int(input("What chapter are you interested in?\n")) - 1
+        # This code raises an error if the chapter entered is not in the book:
+        if idx > len(nt_dict[self.text]) or idx <= -1:
             raise IndexError(
-                "{} only has {} chapters. Please enter a number between {} and {}.".format(
-                    self.text, len(nt_dict[self.text]), 1, len(nt_dict[self.text])))
+                "The book of {} has {} chapters. Please enter a number between {} and {}."
+                .format(self.text, len(nt_dict[self.text]), 1, len(nt_dict[self.text])))
         count, words, chapter_list, chapter_tups, hapaxes = [], [], [], [], []
         chapter_count = 0
 
@@ -144,21 +145,18 @@ class NewTestamentParse(object):
                 del chapter_tups[idx][i]
                 chapter_tups[idx].append("for deletion")
 
-        del_idx = chapter_tups[idx].index("for deletion")
-        del chapter_tups[idx][del_idx:]
-
         for i, _ in enumerate(hapaxes):
             while hapaxes[i] in unwanted or hapaxes[i] in numbers:
                 del hapaxes[i]
                 hapaxes.append("for deletion")
-
-        del_hap = hapaxes.index("for deletion")
-        del hapaxes[del_hap:]
+        # the following del statements index "for deletion" in each list,
+        # and then delete each value following that index via slicing:
+        del chapter_tups[idx][chapter_tups[idx].index("for deletion"):]
+        del hapaxes[hapaxes.index("for deletion"):]
 
         print("\nMost commonly occurring words in the book of {}, Chapter {}:\n\n"
-              .format(self.text, idx), chapter_tups[idx])
-
+              .format(self.text, idx + 1), chapter_tups[idx])
         haps = input(
             "\nWould you also like to return a list of words occurring only once? (Y or N):\n")
-        if haps == "Y" or haps == 'y':
+        if haps == 'Y' or haps == 'y':
             print("\nWords that occur only once:\n", hapaxes[::-1])
