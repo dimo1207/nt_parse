@@ -1,21 +1,22 @@
 """This module is composed of a class which contains
 all of the individual functions I have designed to
 parse the New Testament in various ways. These functions
-are:
-full_parse()
-book_parse()
-most_common()
-Dependency: pickle module"""
+include:
+full_parse() -- indicates presence of word/phrase across NT books
+book_parse() -- finds frequency of word/phrase in one book, etc.
+most_common() -- generates tuples of the most common words per book, etc.
+Dependency: pickle module (sys module optional; cleans up error output)"""
 import pickle
+import sys
+sys.tracebacklimit = None
 
 
 class NewTestamentParse(object):
     """This class includes the following methods:
-    full_parse()
-    book_parse()
-    most_common()
+    full_parse() -- indicates presence of word/phrase across NT books
+    book_parse() -- finds frequency of word/phrase in one book, etc.
+    most_common() -- generates tuples of the most common words per book, etc.
     """
-
     def __init__(self,
                  text,
                  phrase,
@@ -26,9 +27,9 @@ class NewTestamentParse(object):
         if self.key_word == "Default":
             # length_of_words creates a list of word lengths from phrase:
             length_of_words = [(len(word)) for word in phrase.split()]
-            idx = length_of_words.index(max(length_of_words))  # indexes longest word
+            idx = length_of_words.index(max(length_of_words))  # indexes the longest word
             self.key_word = phrase.split()[idx] if len(phrase.split()) > 1 else phrase
-            # ternary operator ; covers single word entries
+            # ternary operator ; covers single word entries when key_word is not specified
 
 
     def full_parse(self):
@@ -57,36 +58,37 @@ class NewTestamentParse(object):
         chapter, sites the chapter where the word occurs most
         frequently, and calculates the total occurence of this
         word in the book as a whole."""
+        nt_dict = pickle.load(open("nt_dict", "rb"))
+        total_word_count = 0
+        chp_count = 0
+        max_chp = 0
+        words_in_chapter = []
 
-        with open("New Testament/" + self.text + ".txt") as book:
-            total_word_count = 0
-            chp_count = 0
-            max_chp = 0
-            words_in_chapter = []
-            for chapter in book:
-                chp_count += 1
-                word_count = 0
-                if self.key_word in chapter:
-                    word_count += chapter.count(self.key_word)
-                words_in_chapter.append(word_count)
-                print("Occurence of \"{}\" in Chapter {}: ".format
-                      (self.key_word, chp_count), word_count)
-                total_word_count += word_count
-                most_freq = max(words_in_chapter)
-            for cnt in words_in_chapter:
-                if total_word_count == 0:
-                    max_chp = "n/a"
-                elif words_in_chapter.count(most_freq) > 1:
-                    max_chp = []
-                    for i, word in enumerate(words_in_chapter):
-                        if word == most_freq:
-                            max_chp.append(i + 1)
-                elif cnt == max(words_in_chapter):
-                    max_chp = (words_in_chapter.index(cnt) + 1)
-            print("\nTotal times that the word \"{}\" occurs in {}: "
-                  .format(self.key_word, self.text), total_word_count,
-                  "\nChapter where \"{}\" occurs most frequently: ".format
-                  (self.key_word), max_chp)
+        for chapter in nt_dict[self.text]:
+            chp_count += 1
+            word_count = 0
+            if self.key_word in nt_dict[self.text][chapter]:
+                word_count += nt_dict[self.text][chapter].count(self.key_word)
+            words_in_chapter.append(word_count)
+            print("Occurence of \"{}\" in Chapter {}: ".format
+                  (self.key_word, chp_count), word_count)
+            total_word_count += word_count
+            most_freq = max(words_in_chapter)
+        for cnt in words_in_chapter:
+            if total_word_count == 0:
+                max_chp = "n/a"
+            elif words_in_chapter.count(most_freq) > 1:
+                max_chp = []
+                for i, word in enumerate(words_in_chapter):
+                    if word == most_freq:
+                        max_chp.append(i + 1)
+            elif cnt == max(words_in_chapter):
+                max_chp = (words_in_chapter.index(cnt) + 1)
+
+        print("\nTotal times that the word \"{}\" occurs in {}: "
+              .format(self.key_word, self.text), total_word_count,
+              "\nChapter where \"{}\" occurs most frequently: ".format
+              (self.key_word), max_chp)
 
 
     def most_common(self):
@@ -95,21 +97,23 @@ class NewTestamentParse(object):
         is the frequency of the word, followed by the word itself.
         Only words occurring X or more times are printed. Words occurring
         only once are added to hapaxes list."""
-
-        with open("New Testament/" + self.text + ".txt") as book:
-            chapters = [chp.split() for chp in book]
-
-        idx = int(input("What chapter are you interested in?\n"))  # Chapter index
+        nt_dict = pickle.load(open("nt_dict", "rb"))
+        # Chapter index:
+        idx = int(input("What chapter are you interested in?\n"))
+        if idx > len(nt_dict[self.text]):
+            raise IndexError(
+                "{} only has {} chapters. Please enter a number between {} and {}.".format(
+                    self.text, len(nt_dict[self.text]), 1, len(nt_dict[self.text])))
         count, words, chapter_list, chapter_tups, hapaxes = [], [], [], [], []
         chapter_count = 0
 
-        for chapter in chapters:
+        for chapter in nt_dict[self.text]:
             chapter_count += 1
             chapter_list.append(chapter_count)
             # List comprehension strips words of punctuation/case
             # and nests them in "words" list, organized by chapter:
             words.append([word.strip("();:\"\'?!,.-").lower()
-                          for word in chapter])
+                          for word in nt_dict[self.text][chapter].split()])
 
         for chapter in words:
             # Creates a list of nested lists containing word lengths;
