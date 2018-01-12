@@ -6,22 +6,22 @@ leaves these words out of the final return value.
 It also collects a list of hapaxes -- words
 occuring only once in the text."""
 import sys
-sys.tracebacklimit = None
 import pickle
-from most_common import *
+from most_common import most_common
+sys.tracebacklimit = None
 
 
 def munge():
     """This is the sole function of the module."""
     nt_dict = pickle.load(open("nt_dict", "rb"))
-    text = input("Which book would you like to parse?\n")
-    if not text.istitle():
-        text = text.title()
-    idx = int(input("What chapter are you interested in?\n"))  # Chapter index
-    if idx > len(nt_dict[text]):
+    text = input("Which book would you like to parse?\n").title()
+    # Chapter index (-1 to adjust for indexing rules):
+    idx = int(input("What chapter are you interested in?\n")) - 1
+    # This code raises an error if the chapter entered is not in the book:
+    if idx > len(nt_dict[text]) or idx <= -1:
         raise IndexError(
-            "{} only has {} chapters. Please enter a number between {} and {}.".format(
-                text, len(nt_dict[text]), 1, len(nt_dict[text])))
+            "The book of {} has {} chapters. Please enter a number between {} and {}."
+            .format(text, len(nt_dict[text]), 1, len(nt_dict[text])))
 
     chapter_tups = most_common(text)
     hapaxes = []
@@ -43,20 +43,18 @@ def munge():
             del chapter_tups[idx][i]
             chapter_tups[idx].append("for deletion")
 
-    del_idx = chapter_tups[idx].index("for deletion")
-    del chapter_tups[idx][del_idx:]
-
     for i, _ in enumerate(hapaxes):
         while hapaxes[i] in unwanted or hapaxes[i] in numbers:
             del hapaxes[i]
             hapaxes.append("for deletion")
 
-    del_hap = hapaxes.index("for deletion")
-    del hapaxes[del_hap:]
+    # the following del statements index "for deletion" in each list,
+    # and then delete each value following that index via slicing:
+    del chapter_tups[idx][chapter_tups[idx].index("for deletion"):]
+    del hapaxes[hapaxes.index("for deletion"):]
 
     print("\nMost commonly occurring words in the book of {}, Chapter {}:\n\n"
-            .format(text, idx), chapter_tups[idx])
-
+          .format(text, idx + 1), chapter_tups[idx])
     haps = input(
         "\nWould you also like to return a list of words occurring only once? (Y or N):\n")
     if haps == "Y" or haps == 'y':
