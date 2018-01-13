@@ -20,11 +20,11 @@ class NewTestamentParse(object):
     def __init__(self,
                  text,
                  phrase,
-                 key_word="Default"):
+                 key_word=None):
         self.text = text.title()
         self.phrase = phrase
         self.key_word = key_word
-        if self.key_word == "Default":
+        if self.key_word is None:
             # creates a list of word lengths from phrase:
             length_of_words = [(len(word)) for word in phrase.split()]
             # indexes the longest word:
