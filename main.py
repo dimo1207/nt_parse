@@ -206,16 +206,55 @@ class NTParse(BoxLayout):
     def return_desired_book(self):
         nt_dict = pickle.load(open("nt_dict", "rb"))
         for key in nt_dict.keys():
-            if key in self.button_text:
+            if key in self.button_text:  # checks for key inclusion
+                # Everything that follows checks for books that begin with numbers:
+                key_index = self.button_text.index(key)
+                if key_index is 0:
+                    return key
+                elif self.button_text[key_index - 2] == "1":
+                    if key[0] == "2":
+                        key.replace(key[0], "1")
+                        return key
+                    elif key[0] == "3":
+                        key.replace(key[0], "1")
+                        return key
+                    key = "1 " + key
+                    return key
+                elif self.button_text[key_index - 2] == "2":
+                    if key[0] == "1":
+                        key.replace(key[0], "2")
+                        return key
+                    elif key[0] == "3":
+                        key.replace(key[0], "2")
+                        return key
+                    key = "2 " + key
+                    return key
+                elif self.button_text[key_index - 2] == "3":
+                    if key[0] == "1":
+                        key.replace(key[0], "3")
+                        return key
+                    elif key[0] == "1":
+                        key.replace(key[0], "3")
+                        return key
+                    key = "3 " + key
+                    return key
                 return key
 
     def return_desired_chapter(self):
-        if len(self.button_text) == 43:
-            return str(self.button_text[-6:-4])
+        # covers cases with two-digit word count returns (book parse only):
+        if self.button_text[-4] == ":":
+            # covers cases with one-digit chapters:
+            if self.button_text[-6] == " ":
+                chapter = str(self.button_text[-5:-4])
+            # covers cases with two-digit chapters:
+            chapter = str(self.button_text[-6:-4])
+        # covers one-digit word count returns (book parse only):
         elif "Occurence" in self.button_text:
-            return str(self.button_text[-5:-3])
+            chapter = str(self.button_text[-5:-3])
         else:
-            return str(self.button_text[-2:])
+            # covers full parse chapters only:
+            chapter = str(self.button_text[-2:])
+        return chapter
 
     def return_bible_text(self):
         nt_dict = pickle.load(open("nt_dict", "rb"))
