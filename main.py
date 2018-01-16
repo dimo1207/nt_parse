@@ -2,10 +2,14 @@ from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import ObjectProperty
 from kivy.uix.listview import ListItemButton
+from kivy.uix.listview import ListItemLabel
 import pickle
 
 
 class BookListButton(ListItemButton):
+    pass
+
+class BookListLabel(ListItemLabel):
     pass
 
 class CurrentBook(BoxLayout):
@@ -13,13 +17,11 @@ class CurrentBook(BoxLayout):
 
 class NTParse(BoxLayout):
 
-    # Connects the value in the TextInput widget to these
-    # fields
+    # Connects the value in the TextInput widget to these fields:
     book_name_text_input = ObjectProperty()
     word_phrase_text_input = ObjectProperty()
     chapter_text_input = ObjectProperty()
-    output_list = ObjectProperty()
-    current_book = ObjectProperty()
+
 
     def search_text(self):
         if self.book_name_text_input.text:
@@ -44,6 +46,10 @@ class NTParse(BoxLayout):
         nt_dict = pickle.load(open("nt_dict", "rb"))
         text = self.search_text()
         key_word = self.search_phrase()
+        
+        # the following check keeps the app from crashing on bad input:
+        if text not in nt_dict.keys():
+            text = "John"
 
         total_word_count, chp_count, max_chp = 0, 0, 0
         parsed_text, words_in_chapter = [], []
@@ -106,14 +112,14 @@ class NTParse(BoxLayout):
         self.output_list.adapter.data = []
         nt_dict = pickle.load(open("nt_dict", "rb"))
         text = self.search_text()
-        # Chapter index (-1 to adjust for indexing rules):
         idx = int(self.search_chapter()) - 1
 
-        # This code raises an error if the chapter entered is not in the book:
-        # if idx > len(nt_dict[self.text]) or idx <= -1:
-        #     raise IndexError(
-        #         "The book of {} has {} chapters. Please enter a number between {} and {}."
-        #         .format(self.text, len(nt_dict[self.text]), 1, len(nt_dict[self.text])))
+        # the following checks keep the app from crashing on bad input:
+        if text not in nt_dict.keys():
+            text = "John"
+        if idx not in nt_dict[text].keys():
+            idx = 0
+
         count, words, chapter_list, chapter_tups, hapaxes = [], [], [], [], []
         chapter_count = 0
 
@@ -158,6 +164,7 @@ class NTParse(BoxLayout):
             while hapaxes[i] in unwanted or hapaxes[i] in numbers:
                 del hapaxes[i]
                 hapaxes.append("for deletion")
+
         # the following del statements index "for deletion" in each list,
         # and then delete each value following that index via slicing:
         del chapter_tups[idx][chapter_tups[idx].index("for deletion"):]
@@ -179,24 +186,17 @@ class NTParse(BoxLayout):
     def clear(self):
 
         self.output_list.adapter.data = []
-
         self.output_list._trigger_reset_populate()
 
     def reset_app(self):
 
         self.clear_widgets()
-
         self.add_widget(NTParse())
 
     def show_text(self, button_text):
 
         self.clear_widgets()
         self.current_book = CurrentBook()
-
-        
-        # self.output_list.adapter.data.extend(["test"])
-        # self.output_list._trigger_reset_populate()
-
         self.add_widget(self.current_book)
     
     def store_button_text(self, button_text):
@@ -265,17 +265,24 @@ class NTParse(BoxLayout):
             if key in self.button_text:
                 book = key
 
-        if len(self.button_text) == 43:
+        # covers cases with two-digit word count returns (book parse only):
+        if self.button_text[-4] == ":":
+            # covers cases with one-digit chapters:
+            if self.button_text[-6] == " ":
+                chapter = int(self.button_text[-5:-4])
+            # covers cases with two-digit chapters:
             chapter = int(self.button_text[-6:-4])
+        # covers one-digit word count returns (book parse only):
         elif "Occurence" in self.button_text:
             chapter = int(self.button_text[-5:-3])
         else:
+            # covers full parse chapters only:
             chapter = int(self.button_text[-2:])
+
 
         outcome = nt_dict[book][chapter].split()
 
         for start in range(0, len(outcome), 12):
-
             yield " ".join(outcome[start:start + 12])
 
 

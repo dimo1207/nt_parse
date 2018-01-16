@@ -1,5 +1,6 @@
 #: import main main
 #: import ListAdapter kivy.adapters.listadapter.ListAdapter
+#: import ListItemLabel kivy.uix.listview.ListItemLabel
 #: import ListItemButton kivy.uix.listview.ListItemButton
 
 NTParse:
@@ -59,15 +60,19 @@ NTParse:
             size_hint_x: 15
             on_press: root.clear()
 
-
     ListView:
         id: output_list_view
         adapter:
             ListAdapter(data=[], cls=main.BookListButton)
 
+
 <ListItemButton>:
     selected_color: 0, 110, 100, 1
     deselected_color: 0, 0, 0, 1
+    font_size: "20dp"
+    color:  0, 55, 75, 1
+    
+<BookListLabel>:
     font_size: "20dp"
     color: 0, 55, 75, 1
 
@@ -88,7 +93,7 @@ NTParse:
     ListView:
         id: ouput_list_view
         adapter:
-            ListAdapter(data=[str(x) for x in app.root.return_bible_text()], cls=main.BookListButton)
+            ListAdapter(data=[str(x) for x in app.root.return_bible_text()], cls=main.BookListLabel)
     BoxLayout:
         orientation: "horizontal"
         size_hint_y: None
