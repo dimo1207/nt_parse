@@ -27,17 +27,6 @@ class NTParse(BoxLayout):
     chapter_text_input = ObjectProperty()
 
 
-    def custom_context_manager(primary_function):
-        """Decorator function. Provides standard enter/exit requirements for the primary functions."""
-        def wrapper_function(self):
-            self.nt_dict = pickle.load(open("nt_dict", "rb")) # imports the raw data
-            self.output_list.adapter.data = [] # clears the "data" list
-            primary_function(self) # executes the primary function that's being decorated
-            self.output_list._trigger_reset_populate() # resets listview with updated "data" list
-            return
-        return wrapper_function # not closing parentheses makes the function "ready to execute"
-
-
     # The following three functions handle text input and set it to different variables:
     def search_text(self):
         """Returns the text found in the TextInput box that follows "Book Name:".
@@ -45,7 +34,7 @@ class NTParse(BoxLayout):
         if self.book_name_text_input.text:
             text = self.book_name_text_input.text
             return text
-        return "John"
+        return "John"  # Default input
 
     def search_phrase(self):
         """Returns the text found in the TextInput box that follows "Word or Phrase:".
@@ -53,7 +42,7 @@ class NTParse(BoxLayout):
         if self.word_phrase_text_input.text:
             phrase = self.word_phrase_text_input.text
             return phrase
-        return "love"
+        return "love"  # Default input
 
     def search_chapter(self):
         """Returns the text found in the TextInput box that follows "Chapter:".
@@ -61,8 +50,21 @@ class NTParse(BoxLayout):
         if self.chapter_text_input.text:
             idx = self.chapter_text_input.text
             return idx
-        return 1
+        return 1  # Default input
 
+
+    def custom_context_manager(primary_function):
+        """Decorator function. Provides standard enter/exit requirements for the primary functions."""
+        def wrapper_function(self):
+            self.nt_dict = pickle.load(
+                open("nt_dict", "rb"))  # imports the raw data
+            self.output_list.adapter.data = []  # clears the "data" list
+            # executes the primary function that's being decorated
+            primary_function(self)
+            # resets listview with updated "data" list
+            self.output_list._trigger_reset_populate()
+            return
+        return wrapper_function  # not closing parentheses makes the function "ready to execute"
 
     # Primary functions of the app (three in total):
     @custom_context_manager
@@ -223,7 +225,7 @@ class NTParse(BoxLayout):
         self.button_text = button_text
 
     def verfiy_integrity(primary_function):
-        """Decorator Function. Resets app if input doesn't match keys."""
+        """Decorator Function. Resets app if button_text input doesn't match keys."""
         def wrapper_function(self, button_text):
             if self.button_text[-1] in [")", ":", "]"]:
                 return self.reset_app()
