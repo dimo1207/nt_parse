@@ -224,20 +224,13 @@ class NTParse(BoxLayout):
         """Stores all of the text displayed on the button being pressed."""
         self.button_text = button_text
 
-    def verfiy_integrity(primary_function):
-        """Decorator Function. Resets app if button_text input doesn't match keys."""
-        def wrapper_function(self, button_text):
-            if self.button_text[-1] in [")", ":", "]"]:
-                return self.reset_app()
-            elif "Total" in self.button_text:
-                return self.reset_app()
-            primary_function(self, button_text)
-            return
-        return wrapper_function
-
-    @verfiy_integrity
     def show_text(self, button_text):
         """Launches CurrentBook widget after clearing any existing widgets."""
+        # The following check keeps the app from crashing on bad input:
+        if self.button_text[-1] in [")", ":", "]"]:
+            return self.reset_app()
+        elif "Total" in self.button_text:
+            return self.reset_app()
         self.clear_widgets()
         self.current_book = CurrentBook()
         self.add_widget(self.current_book)
