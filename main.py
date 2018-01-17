@@ -27,9 +27,8 @@ class NTParse(BoxLayout):
     chapter_text_input = ObjectProperty()
 
 
-    # Decorator:
     def custom_context_manager(primary_function):
-        """Provides standard enter/exit requirements for the primary functions."""
+        """Decorator function. Provides standard enter/exit requirements for the primary functions."""
         def wrapper_function(self):
             self.nt_dict = pickle.load(open("nt_dict", "rb")) # imports the raw data
             self.output_list.adapter.data = [] # clears the "data" list
@@ -78,7 +77,7 @@ class NTParse(BoxLayout):
         
         # The following check keeps the app from crashing on bad input:
         if text not in self.nt_dict.keys():
-            text = "John"
+            return self.reset_app()
 
         total_word_count, chp_count, max_chp = 0, 0, 0
         parsed_text, words_in_chapter = [], []
@@ -214,23 +213,32 @@ class NTParse(BoxLayout):
         self.output_list.adapter.data = []
         self.output_list._trigger_reset_populate()
 
-
     def reset_app(self):
         """Resets the app to starting conditions."""
         self.clear_widgets()
         self.add_widget(NTParse())
 
+    def store_button_text(self, button_text):
+        """Stores all of the text displayed on the button being pressed."""
+        self.button_text = button_text
 
+    def verfiy_integrity(primary_function):
+        """Decorator Function. Resets app if input doesn't match keys."""
+        def wrapper_function(self, button_text):
+            if self.button_text[-1] in [")", ":", "]"]:
+                return self.reset_app()
+            elif "Total" in self.button_text:
+                return self.reset_app()
+            primary_function(self, button_text)
+            return
+        return wrapper_function
+
+    @verfiy_integrity
     def show_text(self, button_text):
         """Launches CurrentBook widget after clearing any existing widgets."""
         self.clear_widgets()
         self.current_book = CurrentBook()
         self.add_widget(self.current_book)
-    
-
-    def store_button_text(self, button_text):
-        """Stores all of the text displayed on the button being pressed."""
-        self.button_text = button_text
 
     def return_desired_book(self):
         """Parses the button_text stored on press.
@@ -294,7 +302,7 @@ class NTParse(BoxLayout):
         Returns the Bible text specified by the processed button_text data."""
         nt_dict = pickle.load(open("nt_dict", "rb"))
         book = ""
-        chapter = ""
+        chapter = 1
 
         for key in nt_dict.keys():
             if key in self.button_text:
@@ -315,10 +323,8 @@ class NTParse(BoxLayout):
             chapter = int(self.button_text[-2:])
 
         outcome = nt_dict[book][chapter].split()
-
         # The following generator is used to yield "outcome" contents to ListView labels.
-        # It limits the length of each label to 11 words
-        # in an effort to ensure that everything is displayed properly:
+        # It limits the length of each label to 11 words to ensure the text is displayed properly:
         for start in range(0, len(outcome), 11):
             yield " ".join(outcome[start:start + 11])
 
