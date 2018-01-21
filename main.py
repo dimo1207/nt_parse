@@ -32,7 +32,7 @@ class NTParse(BoxLayout):
         """Returns the text found in the TextInput box that follows "Book Name:".
         If no text is entered, "John" is returned as the default."""
         if self.book_name_text_input.text:
-            text = self.book_name_text_input.text
+            text = (self.book_name_text_input.text).title()
             return text
         return "John"  # Default input
 
