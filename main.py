@@ -231,6 +231,8 @@ class NTParse(BoxLayout):
             return self.reset_app()
         elif "Total" in self.button_text:
             return self.reset_app()
+        elif len(self.button_text.split(" ")) == 1:
+            return self.reset_app()
         self.clear_widgets()
         self.current_book = CurrentBook()
         self.add_widget(self.current_book)
