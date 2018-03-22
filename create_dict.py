@@ -1,31 +1,43 @@
 import os
 import pickle
 os.chdir('C:\\Users\\m_dim\\Documents\\Anaconda3\\NT Parse Scripts\\New Testament')
-book_keys = [book.strip('.txt') for book in os.listdir()]
-chp_list, chps, final, txt_list, nt_dict = [], [], [], [], {}
+book_titles = [book.strip('.txt') for book in os.listdir()] # List of book titles
+chapters_per_book, files, books, partitioned_books, nt_dict = [], [], [], [], {}
 
-for book in os.listdir():
-    with open(book, 'r') as b:
-        f = b.readlines()
-        chp_list.append(len(f))
-        chps.append(f)
+# Stores file contents, including the number of chapters per book;
+# stored in 'chapters_per_book' and 'files' lists:
+for book_file in os.listdir():
+    with open(book_file, 'r') as b:
+        text = b.readlines()
+        chapters_per_book.append(len(text))
+        files.append(text)
 
-for chp in chps:
-    for txt in chp:
-        txt.split('\n')
-        final.append(txt)
+# Splits the chapters in each book,
+# storing them as 260 separate strings in the 'books' list:
+for book in files:
+    for chapters in book:
+        chapters.split('\n')
+        books.append(chapters)
 
-for length in chp_list:
-    txt_list.append(final[:length])
-    final = final[length:]
+# Separates the chapters in each book into lists,
+# appending them to the 'partitioned_books' list:
+for chapters in chapters_per_book:
+    partitioned_books.append(books[:chapters])
+    books = books[chapters:]
 
-for book, chp in zip(book_keys, chp_list):
-    nt_dict[book] = {i: [] for i in range(1, chp + 1)}
+# Stores nested keys in the 'nt_dict' dictionary:
+# nt_dict[*book_keys][*chapters_per_book] = [*]
+# (empty lists will later be overwritten by 'text')
+for book, chapters in zip(book_titles, chapters_per_book):
+    nt_dict[book] = {i: [] for i in range(1, chapters + 1)}
 
-for i, book in zip(nt_dict, txt_list):
-    for chp, ls in zip(nt_dict[i], book):
-        nt_dict[i][chp] = ls
+# Enters into nt_dict[book][chapter] (while simultaneously entering into
+# the content that will be set to each [book][chapter] key pairing) and
+# replaces the empty lists in 'nt_dict' with this content:
+for book, content in zip(nt_dict, partitioned_books):
+    for chapter, text in zip(nt_dict[book], content):
+        nt_dict[book][chapter] = text
 
 
-# pickle.dump(nt_dict, open('nt_dict.pickle', 'wb'))
-# nt_dict = pickle.load(open('nt_dict.pickle', 'rb'))
+# pickle.dump(nt_dict, open('nt_dict', 'wb'))
+# nt_dict = pickle.load(open('nt_dict', 'rb'))
