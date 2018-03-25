@@ -1,15 +1,12 @@
-#%%
 import re
 import pickle
 import requests
 
 """Creates and imports the nt_dict object used in the nt_parse programs.
-   This involves two functions: "retrieve_titles_and_texts()" and "import_nt_dict()". 
-   The first is piped into the second to create a highly accessible dictionary object 
-   of the full NRSV New Testament. The data is gathered entirely online, so no local files
-   are required."""
+   Nt_dict is a highly accessible dictionary object of the full NRSV New Testament. 
+   The text is gathered entirely online, so no local files are required."""
 
-def retrieve_titles_and_text():
+def import_nt_dict(pickled=False):
     NT_Books = {
           'Matthew': 40, 'Mark': 41, 'Luke': 42, 'John': 43, 'Acts': 44, 'Romans': 45, 
           '1 Corinthians': 46, '2 Corinthians': 47, 'Galatians': 48, 'Ephesians': 49, 
@@ -18,8 +15,8 @@ def retrieve_titles_and_text():
           'James': 59, '1 Peter': 60, '2 Peter': 61, '1 John': 62, '2 John': 63, 
           '3 John': 64, 'Jude': 65, 'Revelation': 66
           }
-    nt_titles = [title for title in NT_Books.keys()]
-    nt_content = []
+    book_titles = [title for title in NT_Books.keys()]
+    nt_content, books, partitioned_books, nt_dict = [], [], [], {}
 
     for book in NT_Books.keys(): # Sets the URL for each book in the above dictionary
         if book[0].isdigit(): # (book titles with numbers have a separate url format)
@@ -56,14 +53,7 @@ def retrieve_titles_and_text():
         # Stores the end product of the loop
         nt_content.append(final_content)
 
-    # Returns the final product of importing and processing each title in NT_Books dictionary
-    return nt_titles, nt_content
-
-
-def import_nt_dict(pickled=False):
-    book_titles, nt_content = retrieve_titles_and_text()
     chapters_per_book = [len(book) for book in nt_content]
-    books, partitioned_books, nt_dict = [], [], {}
 
     # Splits the chapters in each book,
     # storing them as 260 separate strings in the 'books' list:
@@ -97,7 +87,6 @@ def import_nt_dict(pickled=False):
 
     return nt_dict
 
-
 if __name__ == '__main__':
     nt_dict = import_nt_dict(pickled=False)
-    print(nt_dict['Luke'][3])
+    print(nt_dict['John'][3])
