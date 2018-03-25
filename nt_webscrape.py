@@ -1,10 +1,11 @@
+"""Creates and imports the nt_dict object used in 
+the nt_parse programs. Nt_dict is a highly accessible 
+dictionary object of the full NRSV New Testament. 
+The text is gathered entirely online, so no local 
+files are required."""
 import re
 import pickle
 import requests
-
-"""Creates and imports the nt_dict object used in the nt_parse programs.
-   Nt_dict is a highly accessible dictionary object of the full NRSV New Testament. 
-   The text is gathered entirely online, so no local files are required."""
 
 def import_nt_dict(pickled=False):
     NT_Books = {
@@ -18,7 +19,8 @@ def import_nt_dict(pickled=False):
     book_titles = [title for title in NT_Books.keys()]
     nt_content, books, partitioned_books, nt_dict = [], [], [], {}
 
-    for book in NT_Books.keys(): # Sets the URL for each book in the above dictionary
+    for book in NT_Books.keys(): 
+        # Sets the URL for each book in the above dictionary
         if book[0].isdigit(): # (book titles with numbers have a separate url format)
                 URL = 'http://www.devotions.net/bible/{}-{}{}.htm'.format(
                     NT_Books[book], book[0], book[2:].lower())
