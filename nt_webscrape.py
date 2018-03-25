@@ -1,29 +1,29 @@
-"""Creates and imports the nt_dict object used in 
-the nt_parse programs. Nt_dict is a highly accessible 
-dictionary object of the full NRSV New Testament. 
-The text is gathered entirely online, so no local 
+"""Creates and imports the nt_dict object used in
+the nt_parse programs. Nt_dict is a highly accessible
+dictionary object of the full NRSV New Testament.
+The text is gathered entirely online, so no local
 files are required."""
-import re
 import pickle
 import requests
 
 def import_nt_dict(pickled=False):
+    """Optional Parameter: if set to True, the nt_dict object is pickled and saved"""
     NT_Books = {
-          'Matthew': 40, 'Mark': 41, 'Luke': 42, 'John': 43, 'Acts': 44, 'Romans': 45, 
-          '1 Corinthians': 46, '2 Corinthians': 47, 'Galatians': 48, 'Ephesians': 49, 
-          'Philippians': 50, 'Colossians': 51, '1 Thessalonians': 52, '2 Thessalonians': 53, 
-          '1 Timothy': 54, '2 Timothy': 55, 'Titus': 56, 'Philemon': 57, 'Hebrews': 58, 
-          'James': 59, '1 Peter': 60, '2 Peter': 61, '1 John': 62, '2 John': 63, 
-          '3 John': 64, 'Jude': 65, 'Revelation': 66
-          }
-    book_titles = [title for title in NT_Books.keys()]
+        'Matthew': 40, 'Mark': 41, 'Luke': 42, 'John': 43, 'Acts': 44, 'Romans': 45,
+        '1 Corinthians': 46, '2 Corinthians': 47, 'Galatians': 48, 'Ephesians': 49,
+        'Philippians': 50, 'Colossians': 51, '1 Thessalonians': 52, '2 Thessalonians': 53,
+        '1 Timothy': 54, '2 Timothy': 55, 'Titus': 56, 'Philemon': 57, 'Hebrews': 58,
+        'James': 59, '1 Peter': 60, '2 Peter': 61, '1 John': 62, '2 John': 63,
+        '3 John': 64, 'Jude': 65, 'Revelation': 66
+        }
+    book_titles = [title for title in NT_Books]
     nt_content, books, partitioned_books, nt_dict = [], [], [], {}
 
-    for book in NT_Books.keys(): 
+    for book in NT_Books:
         # Sets the URL for each book in the above dictionary
         if book[0].isdigit(): # (book titles with numbers have a separate url format)
-                URL = 'http://www.devotions.net/bible/{}-{}{}.htm'.format(
-                    NT_Books[book], book[0], book[2:].lower())
+            URL = 'http://www.devotions.net/bible/{}-{}{}.htm'.format(
+                NT_Books[book], book[0], book[2:].lower())
         else:
             URL = 'http://www.devotions.net/bible/{}{}.htm'.format(
                 NT_Books[book], book.lower())
@@ -74,7 +74,7 @@ def import_nt_dict(pickled=False):
     # nt_dict[*book_keys][*chapters_per_book] = [*]
     # (empty lists will later be overwritten by 'text')
     for book, chapters in zip(book_titles, chapters_per_book):
-    	nt_dict[book] = {i: [] for i in range(1, chapters+1)}
+        nt_dict[book] = {i: [] for i in range(1, chapters+1)}
 
     # Enters into nt_dict[book][chapter] (while simultaneously entering into
     # the content that will be set to each [book][chapter] key pairing) and
@@ -84,11 +84,51 @@ def import_nt_dict(pickled=False):
             nt_dict[book][chapter] = text
 
 
-    if pickled==True: # Pickles completed nt_dict object
+    if pickled is True:# Pickles completed nt_dict object
         pickle.dump(nt_dict, open('nt_dict.pickle', 'wb'))
 
     return nt_dict
 
+
 if __name__ == '__main__':
     nt_dict = import_nt_dict(pickled=False)
     print(nt_dict['John'][3])
+
+
+# nt_dict = pickle.load(open('nt_dict', 'rb'))
+# ---------------------------------------------------------------------------
+# The above code creates the nt_dict used in nt_parse programs.
+# The following code creates a new version that splits on verses,
+# allowing greater control over queries:
+# (Caveat: use only within a program, not while creating the dictionary)
+
+
+# Splits chapters into verses; verse numbers are not preserved
+# import re
+# for book in nt_dict.keys():
+#     for chapter in nt_dict[book]:
+#         for word in nt_dict[book][chapter].split():
+#             nt_dict[book][chapter] = re.split('[0-9]+', nt_dict[book][chapter])
+#             break
+
+# # Cleans previously split text, removing unnecessary characters:
+# for book in nt_dict.keys():
+#     for chapter in nt_dict[book]:
+#         if len(nt_dict[book][chapter][1]) < 20:  # Cleans books with numbers in title
+#             nt_dict[book][chapter].remove(nt_dict[book][chapter][0])
+#             nt_dict[book][chapter][1] = nt_dict[book][chapter][1][1:]
+#             nt_dict[book][chapter][0] = book + ' ' + \
+#                 str(chapter)  # Reenters proper title
+#         else:  # Cleans remaining books
+#             nt_dict[book][chapter][1] = nt_dict[book][chapter][1][1:]
+#             nt_dict[book][chapter][0] = book + ' ' + \
+#                 str(chapter)  # Reenters proper title
+
+
+# The following code inserts book, chapter, and verse at the beginning of each line in dict
+# (can be modified to include any or all of these features):
+# for book in nt_dict.keys():
+#     for chapter in nt_dict[book]:
+#         for i in range(1, len(nt_dict[book][chapter])):
+#             nt_dict[book][chapter][i] = '(' + book + ' ' + str(
+#                 chapter) + ':' + str(i) + ')' + nt_dict[book][chapter][i]
